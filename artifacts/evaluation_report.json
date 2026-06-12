@@ -1,0 +1,29 @@
+{
+    "model_name": "GradientBoosting",
+    "test_metrics": {
+        "accuracy": 0.8048,
+        "precision": 0.6725,
+        "recall": 0.516,
+        "f1_score": 0.584,
+        "roc_auc": 0.8457
+    },
+    "confusion_matrix": {
+        "true_negative": 941,
+        "false_positive": 94,
+        "false_negative": 181,
+        "true_positive": 193
+    },
+    "top_features": {},
+    "model_comparison": {
+        "RandomForest": {
+            "cv_roc_auc": 0.846
+        },
+        "GradientBoosting": {
+            "cv_roc_auc": 0.849
+        },
+        "LogisticRegression": {
+            "cv_roc_auc": 0.8446
+        }
+    },
+    "classification_report": "              precision    recall  f1-score   support\n\n    No Churn       0.84      0.91      0.87      1035\n       Churn       0.67      0.52      0.58       374\n\n    accuracy                           0.80      1409\n   macro avg       0.76      0.71      0.73      1409\nweighted avg       0.79      0.80      0.80      1409\n"
+}

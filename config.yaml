@@ -1,0 +1,49 @@
+data:
+  url: "https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/master/data/Telco-Customer-Churn.csv"
+  raw_path: "data/raw_churn.csv"
+  processed_path: "data/processed_churn.csv"
+
+target_column: "Churn"
+
+validation:
+  required_columns:
+    - customerID
+    - gender
+    - SeniorCitizen
+    - Partner
+    - Dependents
+    - tenure
+    - PhoneService
+    - MultipleLines
+    - InternetService
+    - OnlineSecurity
+    - OnlineBackup
+    - DeviceProtection
+    - TechSupport
+    - StreamingTV
+    - StreamingMovies
+    - Contract
+    - PaperlessBilling
+    - PaymentMethod
+    - MonthlyCharges
+    - TotalCharges
+    - Churn
+  max_null_percent: 5.0
+
+model:
+  artifacts_dir: "artifacts"
+  model_path: "artifacts/model.pkl"
+  scaler_path: "artifacts/scaler.pkl"
+  label_encoder_path: "artifacts/label_encoders.pkl"
+  report_path: "artifacts/evaluation_report.json"
+  test_size: 0.2
+  random_state: 42
+  cv_folds: 5
+  param_grid:
+    n_estimators: [100, 200]
+    max_depth: [5, 10, null]
+    min_samples_split: [2, 5]
+
+logging:
+  log_file: "logs/pipeline.log"
+  level: "INFO"

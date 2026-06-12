@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Model Metrics</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; }
+    header {
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      padding: 24px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    header h1 { font-size: 1.5rem; font-weight: 700; }
+    header nav a { color: #bfdbfe; text-decoration: none; margin-left: 20px; font-size: 0.9rem; }
+    .container { max-width: 960px; margin: 40px auto; padding: 0 20px; }
+    .card { background: #1e293b; border-radius: 12px; padding: 28px; border: 1px solid #334155; margin-bottom: 24px; }
+    .card h2 { color: #93c5fd; font-size: 1rem; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+    .metric-box {
+      background: #0f172a; border-radius: 10px; padding: 20px;
+      text-align: center; border: 1px solid #1e3a5f;
+    }
+    .metric-box .value { font-size: 2rem; font-weight: 800; color: #6366f1; }
+    .metric-box .label { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; text-transform: uppercase; }
+    .cm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 360px; }
+    .cm-cell {
+      border-radius: 8px; padding: 20px; text-align: center;
+    }
+    .tp { background: #14532d; }
+    .tn { background: #1e3a5f; }
+    .fp { background: #78350f; }
+    .fn { background: #7f1d1d; }
+    .cm-cell .val { font-size: 2rem; font-weight: 800; }
+    .cm-cell .lbl { font-size: 0.7rem; color: #94a3b8; margin-top: 4px; }
+    .fi-bar-wrap { background: #0f172a; border-radius: 4px; height: 8px; margin-top: 4px; overflow: hidden; }
+    .fi-bar { height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed); border-radius: 4px; }
+    .fi-row { margin-bottom: 12px; }
+    .fi-label { display: flex; justify-content: space-between; font-size: 0.85rem; }
+    .fi-label span { color: #94a3b8; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .compare-table th { text-align: left; color: #94a3b8; padding: 8px 12px; border-bottom: 1px solid #334155; font-weight: 600; }
+    .compare-table td { padding: 10px 12px; border-bottom: 1px solid #1e293b; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .highlight td { color: #4ade80; font-weight: 700; }
+    footer { text-align: center; color: #475569; font-size: 0.8rem; padding: 30px; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🔮 Customer Churn Predictor</h1>
+  <nav>
+    <a href="/">Predict</a>
+    <a href="/metrics">Model Metrics</a>
+  </nav>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>🏆 Best Model: {{ report.model_name }}</h2>
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="value">{{ (report.test_metrics.accuracy * 100) | round(1) }}%</div>
+        <div class="label">Accuracy</div>
+      </div>
+      <div class="metric-box">
+        <div class="value">{{ (report.test_metrics.f1_score * 100) | round(1) }}%</div>
+        <div class="label">F1 Score</div>
+      </div>
+      <div class="metric-box">
+        <div class="value">{{ (report.test_metrics.roc_auc * 100) | round(1) }}%</div>
+        <div class="label">ROC-AUC</div>
+      </div>
+      <div class="metric-box">
+        <div class="value">{{ (report.test_metrics.precision * 100) | round(1) }}%</div>
+        <div class="label">Precision</div>
+      </div>
+      <div class="metric-box">
+        <div class="value">{{ (report.test_metrics.recall * 100) | round(1) }}%</div>
+        <div class="label">Recall</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔢 Confusion Matrix</h2>
+    <div class="cm-grid">
+      <div class="cm-cell tn">
+        <div class="val">{{ report.confusion_matrix.true_negative }}</div>
+        <div class="lbl">True Negative<br>(Correctly predicted No Churn)</div>
+      </div>
+      <div class="cm-cell fp">
+        <div class="val">{{ report.confusion_matrix.false_positive }}</div>
+        <div class="lbl">False Positive<br>(Predicted Churn, was No)</div>
+      </div>
+      <div class="cm-cell fn">
+        <div class="val">{{ report.confusion_matrix.false_negative }}</div>
+        <div class="lbl">False Negative<br>(Predicted No, was Churn)</div>
+      </div>
+      <div class="cm-cell tp">
+        <div class="val">{{ report.confusion_matrix.true_positive }}</div>
+        <div class="lbl">True Positive<br>(Correctly predicted Churn)</div>
+      </div>
+    </div>
+  </div>
+
+  {% if report.top_features %}
+  <div class="card">
+    <h2>📈 Top Feature Importances</h2>
+    {% set max_val = report.top_features.values() | list | max %}
+    {% for feature, importance in report.top_features.items() %}
+    <div class="fi-row">
+      <div class="fi-label">
+        <span>{{ feature }}</span>
+        <span>{{ (importance * 100) | round(2) }}%</span>
+      </div>
+      <div class="fi-bar-wrap">
+        <div class="fi-bar" style="width: {{ ((importance / max_val) * 100) | round(1) }}%"></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if report.model_comparison %}
+  <div class="card">
+    <h2>⚖️ Model Comparison (CV ROC-AUC)</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>CV ROC-AUC</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for name, stats in report.model_comparison.items() %}
+        <tr {% if name == report.model_name %}class="highlight"{% endif %}>
+          <td>{{ name }} {% if name == report.model_name %}★{% endif %}</td>
+          <td>{{ stats.cv_roc_auc }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+<footer>Customer Churn Prediction System · ML Pipeline Project</footer>
+</body>
+</html>

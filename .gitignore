@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+env/
+.DS_Store
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+logs/*.log
+data/raw_churn.csv
+data/processed_churn.csv
