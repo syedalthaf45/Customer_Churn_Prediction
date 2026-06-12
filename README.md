@@ -63,82 +63,11 @@ churn_prediction/
 - ROC-AUC: **84.57%**
 - F1 Score: **0.584**
 
----
 
-## Setup & Run
 
-### 1. Clone & Install
-```bash
-git clone https://github.com/yourusername/churn-prediction
-cd churn_prediction
-pip install -r requirements.txt
-```
 
-### 2. Train the Model
-```bash
-python run_pipeline.py
-```
 
-### 3. Run Flask App
-```bash
-python app.py
-# Visit: http://localhost:5000
-```
 
-### 4. API Usage
-```bash
-curl -X POST http://localhost:5000/api/predict \
-  -H "Content-Type: application/json" \
-  -d '{
-    "gender": "Female",
-    "SeniorCitizen": 0,
-    "Partner": "Yes",
-    "Dependents": "No",
-    "tenure": 12,
-    "PhoneService": "Yes",
-    "MultipleLines": "No",
-    "InternetService": "Fiber optic",
-    "OnlineSecurity": "No",
-    "OnlineBackup": "No",
-    "DeviceProtection": "No",
-    "TechSupport": "No",
-    "StreamingTV": "No",
-    "StreamingMovies": "No",
-    "Contract": "Month-to-month",
-    "PaperlessBilling": "Yes",
-    "PaymentMethod": "Electronic check",
-    "MonthlyCharges": 75.50,
-    "TotalCharges": 906.0
-  }'
-```
-
-**Response:**
-```json
-{
-  "prediction": 1,
-  "label": "Will Churn",
-  "churn_probability": 53.09,
-  "risk_level": "Medium Risk"
-}
-```
-
----
-
-## Docker / Render Deployment
-
-```bash
-# Build and run locally
-docker build -t churn-predictor .
-docker run -p 5000:5000 churn-predictor
-```
-
-For Render:
-1. Push to GitHub
-2. Create new **Web Service** on Render
-3. Set **Environment**: Docker
-4. Deploy — Render auto-builds and runs the pipeline
-
----
 
 ## Tech Stack
 - **Python 3.11**
@@ -152,4 +81,4 @@ For Render:
 ---
 
 ## Author
-**Altaf** — B.Tech CSE (AI/ML), SR University
+** Syed Althaf** 
